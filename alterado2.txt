@@ -1,0 +1,1 @@
+escrevendo dados em um novo arquivo.python

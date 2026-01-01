@@ -1,4 +1,17 @@
+from datetime import datetime
 import textwrap
+operacao = 0
+
+'''
+(DESAFIO DA DIO)
+=(Estabelecer um limite de 10 transaçoes diarias pra uma conta)= concluida
+
+-Se o usuario tentar fazer uma transaçao apos atingir o limite,
+deve ser informado que ele excedeu o numero de transaçoes permitidas para aquele dia.
+
+-Mostre no extrato,a data e hora de todas as transaçoes
+
+'''
 
 def menu():
     menu = '''
@@ -13,38 +26,58 @@ def menu():
     '''
     return input(textwrap.dedent(menu))
 
+
 def depositar(saldo,valor,extrato,/):
-    if valor > 0:
-        saldo += valor
-        extrato += f'Deposito: R${valor:.2f}\n'
-        print(f'Deposito de R${valor} realizado com sucesso')
+    global operacao
+    operacao += 1
+
+    if operacao < 10:
+
+        if valor > 0:
+            saldo += valor
+            agora = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            extrato += f'{agora} - Deposito: R${valor:.2f}\n'
+            print(f'Deposito de R${valor:.2f} realizado com sucesso')
+            print(f'transaçoes realizadas: {operacao}')
+
+        else:
+            print('operaçao falhou,o valor informado e invalido')
     else:
-        print('operaçao falhou,o valor informado e invalido')
+        print(f'Limite de transaçoes de hoje atingido,limite: {operacao}')
 
     return saldo,extrato
 
 def sacar(*,saldo,valor,extrato,limite,numero_saque,limite_saque):
-    excedeu_saldo = valor > saldo
-    excedeu_limite = valor > limite
-    excedeu_saques = numero_saque >= limite_saque
+    global operacao
+    operacao += 1
 
-    if excedeu_saldo:
-        print('\n Operaçao falhou,Voce nao tem saldo suficiente.')
+    if operacao < 10:
 
-    if excedeu_limite:
-        print('\n Operaçao falhou,O valor do saque excede o limite.')
+        excedeu_saldo = valor > saldo
+        excedeu_limite = valor > limite
+        excedeu_saques = numero_saque >= limite_saque
 
-    elif excedeu_saques:
-        print('\n Operaçao falhor,Numero maximo de saques excedido.')
+        if excedeu_saldo:
+            print('\n Operaçao falhou,Voce nao tem saldo suficiente.')
 
-    elif valor > 0:
-        saldo -= valor
-        extrato += f'Saque: R${valor:.2f}\n'
-        numero_saque += 1
-        print('\n ---Saque realizado com sucesso---')
+        if excedeu_limite:
+            print('\n Operaçao falhou,O valor do saque excede o limite.')
 
+        elif excedeu_saques:
+            print('\n Operaçao falhor,Numero maximo de saques excedido.')
+
+        elif valor > 0:
+            saldo -= valor
+            agora = datetime.now().strtime('%d/%m/$Y %H:%M:%S')
+            extrato += f'{agora} - Saque: R${valor:.2f}\n'
+            numero_saque += 1
+            print(f'---Saque realizado com sucesso ---')
+            print(f'transaçoes realizadas: {operacao}')
+
+        else:
+            print('\n Operaçao falhou,O valor informado e invalido.')
     else:
-        print('\n Operaçao falhou,O valor informado e invalido.')
+        print(f'Limite de transaçoes de hoje atingido,limite: {operacao}')
 
     return saldo,extrato
 
@@ -94,8 +127,13 @@ def listar_contas(contas):
         print('-' * 100)
         print(textwrap.dedent(linha))
 
+def limite_transacao():
+    pass
+
 def main():
+    limite_saque = 0
     LIMITE_SAQUE = 3
+    #LIMITE_TRANSACAO = 10
     AGENCIA = '0001'
 
     saldo = 0
@@ -123,6 +161,7 @@ def main():
                 limite=limite,
                 numero_saque=numero_saque,
                 limite_saque=LIMITE_SAQUE,
+                #limite_transacao=LIMITE_TRANSACAO
             )
 
         elif opcao == 'e':
